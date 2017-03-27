@@ -28,6 +28,12 @@ source madamruby/bin/activate
 python madamruby.py
 ```
 
+### Deploy
+In Slack:
+```
+@madamruby restart
+```
+
 ### References
 
 https://www.fullstackpython.com/blog/build-first-slack-bot-python.html (thanks!)
