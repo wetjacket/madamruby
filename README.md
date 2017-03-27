@@ -20,7 +20,7 @@ python print_bot_id.py
 export BOT_ID='bot id returned by script'
 python madamruby.py
 ```
-In Slack, join `#madamruby-test`, Settings, and Invite team members to join... and invite your development bot to the #madamruby-test channel.
+In Slack, join `#madamruby-test`, Settings, and Invite team members to join... and invite your development bot to the `#madamruby-test` channel.
 
 ### Run
 ```
