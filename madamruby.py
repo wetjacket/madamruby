@@ -166,7 +166,7 @@ def jerome(channel):
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
-def bold(channel):
+def womp(channel):
     response = "https://wompwompwomp.com/"
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
