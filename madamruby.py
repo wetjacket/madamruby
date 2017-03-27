@@ -166,6 +166,11 @@ def jerome(channel):
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
+def bold(channel):
+    response = "https://wompwompwomp.com/"
+    slack_client.api_call("chat.postMessage", channel=channel,
+                          text=response, as_user=True)
+
 def parse_slack_output(slack_rtm_output):
     """
         The Slack Real Time Messaging API is an events firehose.
@@ -191,6 +196,8 @@ def parse_slack_output(slack_rtm_output):
                     return bold(output['channel'])
                 if "!jerome" in output['text']:
                     return jerome(output['channel'])
+                if "!womp" in output['text']:
+                    return womp(output['channel'])
                 if AT_BOT in output['text']:
                     # return text after the @ mention, whitespace removed
                     return None, output['text'].split(AT_BOT)[1].strip().lower(), \
@@ -208,10 +215,10 @@ if __name__ == "__main__":
                 quotes, command, channel = parse_slack_output(slack_client.rtm_read())
                 if channel:
                     handle_command(quotes, command, channel)
-                            
+
             except TypeError:
                 pass
-            
+
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
