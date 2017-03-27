@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+
 import os
+import sys
 import time
 import random
+from subprocess import Popen, PIPE
 from slackclient import SlackClient
 
 HANDEY = ["I can imagine a world of love, peace, and no wars. Then I imagine myself attacking that place because they would never expect it.",
@@ -108,11 +112,23 @@ PEEWEE = ["There's a lotta things about me you don't know anything about, Dottie
 # madamruby's ID as an environment variable
 BOT_ID = os.environ.get("BOT_ID")
 
-# TODO:
-# AT_BOT = "<@" + BOT_ID + ">"
+AT_BOT = "<@" + BOT_ID + ">"
 
 # instantiate Slack & Twilio clients
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+
+def restart(channel):
+    """
+        Dirty workaround until CI or similar can exist.
+        Usage: @madamruby restart
+    """
+    p = Popen(['git', 'pull'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    for line in p.stdout:
+        if "Already up-to-date." in line:
+            slack_client.api_call("chat.postMessage", channel=channel,
+                          text="Already up-to-date.", as_user=True)
+        else:
+            os.execv(__file__, sys.argv)
 
 def handle_command(quotes, command, channel):
     """
@@ -120,6 +136,9 @@ def handle_command(quotes, command, channel):
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
+    if command == "restart":
+        restart(channel)
+
     try:
         response = quotes[int(command) - 1]
     except (ValueError, IndexError):
@@ -172,6 +191,10 @@ def parse_slack_output(slack_rtm_output):
                     return bold(output['channel'])
                 if "!jerome" in output['text']:
                     return jerome(output['channel'])
+                if AT_BOT in output['text']:
+                    # return text after the @ mention, whitespace removed
+                    return None, output['text'].split(AT_BOT)[1].strip().lower(), \
+                           output['channel']
 
     return None, None, None
 
