@@ -1,8 +1,7 @@
 import os
 from slackclient import SlackClient
 
-BOT_NAME = 'madamruby'
-
+BOT_NAME = os.environ.get('BOT_NAME')
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 if __name__ == "__main__":
