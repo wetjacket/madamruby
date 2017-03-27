@@ -1,5 +1,7 @@
 # madamruby
 
+  ![Alt text](/madamruby.jpg?raw=true "You're here because you ... WANT something ...")
+
 _"For twenty dollars I can tell you a lot of things. For thirty dollars I can tell you more. And for fifty dollars I can tell you *everything*."_
 
 ### Setup
