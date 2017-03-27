@@ -10,6 +10,7 @@ Clone the repository.
 ```
 virtualenv madamruby
 source madamruby/bin/activate
+pip install slackclient
 ```
 Create a development bot at https://wetjacket.slack.com/apps/new/A0F7YS25R-bots.
 ```
