@@ -21,6 +21,12 @@ python madamruby.py
 ```
 In Slack, join `#madamruby-test`, Settings, and Invite team members to join... and invite your development bot to the #madamruby-test channel.
 
+### Run
+```
+source madamruby/bin/activate
+python madamruby.py
+```
+
 ### References
 
 https://www.fullstackpython.com/blog/build-first-slack-bot-python.html (thanks!)
