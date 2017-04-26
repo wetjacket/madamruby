@@ -166,6 +166,11 @@ def jerome(channel):
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
+def hbdmattk(channel):
+    response = "happy birthday mattk!"
+    slack_client.api_call("chat.postMessage", channel=channel,
+                          text=response, as_user=True)
+
 def womp(channel):
     response = "https://wompwompwomp.com/"
     slack_client.api_call("chat.postMessage", channel=channel,
@@ -196,6 +201,8 @@ def parse_slack_output(slack_rtm_output):
                     return bold(output['channel'])
                 if "!jerome" in output['text']:
                     return jerome(output['channel'])
+                if "!mattk" in output['text']:
+                    return hbdmattk(output['channel'])
                 if "!womp" in output['text']:
                     return womp(output['channel'])
                 if AT_BOT in output['text']:
