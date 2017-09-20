@@ -94,7 +94,7 @@ PEEWEE = ["There's a lotta things about me you don't know anything about, Dottie
 "Is this something you can share with the rest of us, Amazing Larry?",
 "I bought this pen exactly one hour before my bike was stolen. Why? What's the significance? I DON'T KNOW!",
 "Well, I lost my temper and I took a knife and I uh-- Do you know those \"Do Not Remove Under the Penalty of Law\" labels they put on mattresses? Well, I CUT one of them off!",
-"On this very night, ten years ago, along this same stretch of road in a dense fog just like this, I saw the worst accident I ever seen. There was this sound, like a garbage truck dropped off the Empire State Building... And when they finally pulled the driver's body from the twisted, burning wreck...it looked like THIS!! http://bit.ly/1EyILKn ",
+"On this very night, ten years ago, along this same stretch of road in a dense fog just like this, I saw the worst accident I ever seen. There was this sound, like a garbage truck dropped off the Empire State Building... And when they finally pulled the driver's body from the twisted, burning wreck...it looked like THIS!!",
 "There's no basement at the Alamo!",
 "I meant to do that.",
 "I'll say! I'm going to start a paper route right now.",
