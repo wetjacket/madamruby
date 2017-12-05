@@ -176,7 +176,7 @@ def womp(channel):
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
-def nervoushomer(channel):
+def logistics(channel):
     response = "https://media.giphy.com/media/HaTyTRF78zslO/giphy.gif"
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
@@ -210,8 +210,8 @@ def parse_slack_output(slack_rtm_output):
                     return hbdmattk(output['channel'])
                 if "!womp" in output['text']:
                     return womp(output['channel'])
-                if "!nervoushomer" in output['text']:
-                    return nervoushomer(output['channel'])
+                if "!logistics" in output['text']:
+                    return logistics(output['channel'])
                 if AT_BOT in output['text']:
                     # return text after the @ mention, whitespace removed
                     return None, output['text'].split(AT_BOT)[1].strip().lower(), \
