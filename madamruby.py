@@ -181,6 +181,11 @@ def logistics(channel):
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
+def fuckit(channel):
+    response = "https://local.theonion.com/man-says-fuck-it-eats-lunch-at-10-58-a-m-1819574888"
+    slack_client.api_call("chat.postMessage", channel=channel,
+                          text=response, as_user=True)
+
 def parse_slack_output(slack_rtm_output):
     """
         The Slack Real Time Messaging API is an events firehose.
@@ -212,6 +217,8 @@ def parse_slack_output(slack_rtm_output):
                     return womp(output['channel'])
                 if "!logistics" in output['text']:
                     return logistics(output['channel'])
+                if "!fuckit" in output['text']:
+                    return fuckit(output['channel'])
                 if AT_BOT in output['text']:
                     # return text after the @ mention, whitespace removed
                     return None, output['text'].split(AT_BOT)[1].strip().lower(), \
