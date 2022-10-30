@@ -10,11 +10,12 @@ Clone the repository.
 ```
 virtualenv madamruby
 source madamruby/bin/activate
-pip install slackclient
+pip install slack_bolt
 ```
 Create a development bot at https://wetjacket.slack.com/apps/new/A0F7YS25R-bots.
 ```
-export SLACK_BOT_TOKEN='your slack token pasted here'
+export SLACK_BOT_TOKEN='your slack bot token pasted here'
+export SLACK_APP_TOKEN='your slack app token pasted here'
 export BOT_NAME='your slack bot name pasted here'
 python print_bot_id.py
 export BOT_ID='bot id returned by script'

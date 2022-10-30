@@ -2,10 +2,11 @@
 
 import os
 import sys
-import time
+import re
 import random
 from subprocess import Popen, PIPE
-from slackclient import SlackClient
+from slack_bolt import App
+from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 HANDEY = ["I can imagine a world of love, peace, and no wars. Then I imagine myself attacking that place because they would never expect it.",
 "I guess we were kinda poor when we were kids, but we didn't know it. That's because my dad always refused to let us look at the family's financial records.",
@@ -109,137 +110,120 @@ PEEWEE = ["There's a lotta things about me you don't know anything about, Dottie
 "Your mind plays tricks on you. You play tricks back! It's like you're unraveling a big cable-knit sweater that someone keeps knitting and knitting and knitting and knitting and knitting and knitting and knitting.",
 "That old highway's a-calling. Gotta move on."]
 
-# madamruby's ID as an environment variable
-BOT_ID = os.environ.get("BOT_ID")
+# Initializes your app with your bot token and socket mode handler
+app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
 
-AT_BOT = "<@" + BOT_ID + ">"
+# def restart(channel):
+#     """
+#         Dirty workaround until CI or similar can exist.
+#         Usage: @madamruby restart
+#     """
+#     p = Popen(['git', 'pull'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+#     for line in p.stdout:
+#         if "Already up-to-date." in line:
+#             slack_client.api_call("chat.postMessage", channel=channel,
+#                           text="Already up-to-date.", as_user=True)
+#         else:
+#             os.execv(__file__, sys.argv)
+#
+# def handle_command(quotes, command, channel):
+#     """
+#         Receives commands directed at the bot and determines if they
+#         are valid commands. If so, then acts on the commands. If not,
+#         returns back what it needs for clarification.
+#     """
+#     if command == "restart":
+#         restart(channel)
+#
+#     try:
+#         response = quotes[int(command) - 1]
+#     except (ValueError, IndexError):
+#         response = random.choice(quotes)
+#
+#     if response:
+#         slack_client.api_call("chat.postMessage", channel=channel,
+#                           text=response, as_user=True)
 
-# instantiate Slack & Twilio clients
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
-
-def restart(channel):
-    """
-        Dirty workaround until CI or similar can exist.
-        Usage: @madamruby restart
-    """
-    p = Popen(['git', 'pull'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    for line in p.stdout:
-        if "Already up-to-date." in line:
-            slack_client.api_call("chat.postMessage", channel=channel,
-                          text="Already up-to-date.", as_user=True)
-        else:
-            os.execv(__file__, sys.argv)
-
-def handle_command(quotes, command, channel):
-    """
-        Receives commands directed at the bot and determines if they
-        are valid commands. If so, then acts on the commands. If not,
-        returns back what it needs for clarification.
-    """
-    if command == "restart":
-        restart(channel)
-
-    try:
-        response = quotes[int(command) - 1]
-    except (ValueError, IndexError):
-        response = random.choice(quotes)
-
-    if response:
-        slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
-
-def hedge(channel, yoda):
-    if yoda:
+@app.message("!hedge")
+def hedge(message, say):
+    print(message)
+    if "!yoda" in message['text']:
         response = "https://media1.giphy.com/media/12FLhMHdanoLJK/giphy.gif"
     else:
         response = "https://media3.giphy.com/media/a93jwI0wkWTQs/giphy.gif"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+    say(response)
 
-def bold(channel):
-    response = "BE BOLD!"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+@app.message("!bold")
+def bold(message, say):
+    say("BE BOLD!")
 
-def jerome(channel):
-    response = "point Jerome!"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+@app.message("!jerome")
+def jerome(message, say):
+    say("point Jerome!")
 
-def hbdmattk(channel):
-    response = "happy birthday mattk!"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+@app.message("!mattk")
+def hbdmattk(message, say):
+    say("happy birthday mattk!")
 
-def womp(channel):
-    response = "https://wompwompwomp.com/"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+@app.message("!womp")
+def womp(message, say):
+    say("https://wompwompwomp.com/")
 
-def logistics(channel):
-    response = "https://media.giphy.com/media/HaTyTRF78zslO/giphy.gif"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+@app.message("!logistics")
+def logistics(message, say):
+    say("https://media.giphy.com/media/HaTyTRF78zslO/giphy.gif")
 
-def fuckit(channel):
-    response = "https://local.theonion.com/man-says-fuck-it-eats-lunch-at-10-58-a-m-1819574888"
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+@app.message("!fuckit")
+def fuckit(message, say):
+    say("https://local.theonion.com/man-says-fuck-it-eats-lunch-at-10-58-a-m-1819574888")
 
-def parse_slack_output(slack_rtm_output):
-    """
-        The Slack Real Time Messaging API is an events firehose.
-        this parsing function returns None unless a message is
-        directed at the Bot, based on its ID.
-    """
-    output_list = slack_rtm_output
-    if output_list and len(output_list) > 0:
-        for output in output_list:
-            if output and 'text' in output:
-                if "!handey" in output['text']:
-                    return HANDEY, output['text'].split("!handey")[1].strip().lower(), \
-                       output['channel']
-                if "!peewee" in output['text']:
-                    return PEEWEE, output['text'].split("!peewee")[1].strip().lower(), \
-                       output['channel']
-                if "!hedge" in output['text']:
-                    if "!yoda" in output['text']:
-                        return hedge(output['channel'], True)
-                    else:
-                        return hedge(output['channel'], False)
-                if "!bold" in output['text']:
-                    return bold(output['channel'])
-                if "!jerome" in output['text']:
-                    return jerome(output['channel'])
-                if "!mattk" in output['text']:
-                    return hbdmattk(output['channel'])
-                if "!womp" in output['text']:
-                    return womp(output['channel'])
-                if "!logistics" in output['text']:
-                    return logistics(output['channel'])
-                if "!fuckit" in output['text']:
-                    return fuckit(output['channel'])
-                if AT_BOT in output['text']:
-                    # return text after the @ mention, whitespace removed
-                    return None, output['text'].split(AT_BOT)[1].strip().lower(), \
-                           output['channel']
+@app.message("!peewee")
+def peewee(message, say):
+    say(random.choice(PEEWEE))
 
-    return None, None, None
+@app.message("!handey")
+def handey(message, say):
+    say(random.choice(HANDEY))
+
+# def parse_slack_output(slack_rtm_output):
+#     """
+#         The Slack Real Time Messaging API is an events firehose.
+#         this parsing function returns None unless a message is
+#         directed at the Bot, based on its ID.
+#     """
+#     output_list = slack_rtm_output
+#     if output_list and len(output_list) > 0:
+#         for output in output_list:
+#             if output and 'text' in output:
+#                 if "!handey" in output['text']:
+#                     return HANDEY, output['text'].split("!handey")[1].strip().lower(), \
+#                        output['channel']
+#                 if "!peewee" in output['text']:
+#                     return PEEWEE, output['text'].split("!peewee")[1].strip().lower(), \
+#                        output['channel']
+#                 if "!hedge" in output['text']:
+#                     if "!yoda" in output['text']:
+#                         return hedge(output['channel'], True)
+#                     else:
+#                         return hedge(output['channel'], False)
+#                 if "!bold" in output['text']:
+#                     return bold(output['channel'])
+#                 if "!jerome" in output['text']:
+#                     return jerome(output['channel'])
+#                 if "!mattk" in output['text']:
+#                     return hbdmattk(output['channel'])
+#                 if "!womp" in output['text']:
+#                     return womp(output['channel'])
+#                 if "!logistics" in output['text']:
+#                     return logistics(output['channel'])
+#                 if "!fuckit" in output['text']:
+#                     return fuckit(output['channel'])
+#                 if AT_BOT in output['text']:
+#                     # return text after the @ mention, whitespace removed
+#                     return None, output['text'].split(AT_BOT)[1].strip().lower(), \
+#                            output['channel']
+#
+#     return None, None, None
 
 if __name__ == "__main__":
-    READ_WEBSOCKET_DELAY = 1 # 1 second delay between reading from firehose
-    if slack_client.rtm_connect():
-        print("madamruby connected and running!")
-        while True:
-
-            try:
-                quotes, command, channel = parse_slack_output(slack_client.rtm_read())
-                if channel:
-                    handle_command(quotes, command, channel)
-
-            except TypeError:
-                pass
-
-            time.sleep(READ_WEBSOCKET_DELAY)
-    else:
-        print("Connection failed. Invalid Slack token or bot ID?")
+    SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
